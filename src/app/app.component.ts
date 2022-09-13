@@ -14,7 +14,8 @@ export class AppComponent implements OnInit{
 
   public todoList: Todo[] = [];
   public createFormText = "";
-  public selectedRow = -1;
+  public selectedElementId = -1;
+  public requestType = "";
 
   createForm = new FormGroup({
     userId: new FormControl('', Validators.compose([Validators.required, Validators.min(1)])),
@@ -32,8 +33,12 @@ export class AppComponent implements OnInit{
     this.createFormText = "";
   }
 
-  public selectRow(index: number): void{
-    this.selectedRow = index;
+  public setRequestType(newType:string): void{
+    this.requestType = newType;
+  }
+
+  public selectElement(elemId: number): void{
+    this.selectedElementId = elemId;
   }
 
   public getAllTodos(): void {
@@ -48,10 +53,18 @@ export class AppComponent implements OnInit{
     )
   }
 
+  private findIndexById(id:number): number{
+    for(let i = 0; i < this.todoList.length; ++i) {
+      if(this.todoList[i].id == id) return i;
+    }
+    return -1;
+  }
+
   public deleteTodo(): void {
-    this.todoService.deleteTodo(this.selectedRow).subscribe(
+    this.todoService.deleteTodo(this.selectedElementId).subscribe(
       () => {
-        this.todoList.splice(this.selectedRow, 1)
+        let selectedRow = this.findIndexById(this.selectedElementId);
+        this.todoList.splice(selectedRow, 1)
       },
       (error: HttpErrorResponse) => {
         alert(error.message)
@@ -78,22 +91,51 @@ export class AppComponent implements OnInit{
       return;
     }
 
-    let newTodo = {} as Todo;
-    newTodo.title = <string>this.createForm.value.title;
-    // @ts-ignore
-    newTodo.userId = this.createForm.value.userId;
-    newTodo.completed = <boolean>this.createForm.value.completed;
+    if(this.requestType == 'post') {
+      let newTodo = {} as Todo;
+      newTodo.title = <string>this.createForm.value.title;
+      // @ts-ignore
+      newTodo.userId = this.createForm.value.userId;
+      newTodo.completed = <boolean>this.createForm.value.completed;
 
-    this.todoService.addTodo(newTodo).subscribe(
-      (response: Todo) => {
-        this.createFormText = "Todo created successfully"
-        console.log(response)
-      },
-      (error: HttpErrorResponse) => {
-        alert(error.message)
-      }
-    )
+      this.todoService.addTodo(newTodo).subscribe(
+        (response: Todo) => {
+          this.createFormText = "Todo created successfully"
+          this.createForm.reset();
+          console.log(response)
+        },
+        (error: HttpErrorResponse) => {
+          alert(error.message)
+        }
+      )
+    }
+    if(this.requestType == 'put') {
+      let newTodo = {} as Todo;
 
+      newTodo.id = this.selectedElementId;
+      newTodo.title = <string>this.createForm.value.title;
+      // @ts-ignore
+      newTodo.userId = this.createForm.value.userId;
+      newTodo.completed = <boolean>this.createForm.value.completed;
+
+      this.todoService.editTodo(newTodo).subscribe(
+        (response: Todo) => {
+          this.createFormText = "Todo edited successfully"
+          this.createForm.reset();
+
+          let index = this.findIndexById(this.selectedElementId);
+          this.todoList[index].title = newTodo.title;
+          this.todoList[index].userId = newTodo.userId;
+          this.todoList[index].completed = newTodo.completed;
+
+          console.log(response)
+        },
+        (error: HttpErrorResponse) => {
+          alert(error.message)
+        }
+      )
+    }
+    return;
   }
 
 }

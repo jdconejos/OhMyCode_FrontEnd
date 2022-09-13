@@ -24,15 +24,15 @@
                     </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let todo of todoList; let indexOfelement=index">
+                      <tr *ngFor="let todo of todoList; let indexOfelement=index" id="tableId_{{todo.id}}">
                           <td class="text-nowrap align-middle"><span>{{todo.title}}</span></td>
                           <td class="text-nowrap align-middle"><span>{{todo.userId}}</span> </td>
                           <td class="text-nowrap align-middle"><span>{{todo.completed}}</span></td>
                           <td class="text-nowrap align-middle">
                             <a data-bs-toggle="modal" data-bs-target="#user-form-modal" class="MainNavText" id="editLink"
-                               href="#user-form-modal"> edit</a> /
+                               href="#user-form-modal" (click)="resetText(); setRequestType('put'); selectElement(todo.id)"> edit</a> /
                             <a data-bs-toggle="modal" data-bs-target="#deleteModal" class="MainNavText" id="deleteLink"
-                               href="#deleteModal" (click)="selectRow(indexOfelement)"> delete</a>
+                               href="#deleteModal" (click)="selectElement(todo.id)"> delete</a>
                           </td>
                       </tr>
                     </tbody>
@@ -58,7 +58,7 @@
           <div class="card">
             <div class="card-body">
               <div class="text-center px-xl-3">
-                <button class="btn btn-success btn-block" type="button" data-bs-toggle="modal" data-bs-target="#user-form-modal" (click)="resetText()">New Todo</button>
+                <button class="btn btn-success btn-block" type="button" data-bs-toggle="modal" data-bs-target="#user-form-modal" (click)="resetText(); setRequestType('post')">New Todo</button>
               </div>
               <hr class="my-3">
               <div>
