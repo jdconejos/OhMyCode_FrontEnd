@@ -51,7 +51,7 @@
           <div class="card">
             <div class="card-body">
               <div class="text-center px-xl-3">
-                <button class="btn btn-success btn-block" type="button" data-bs-toggle="modal" data-bs-target="#user-form-modal">New Todo</button>
+                <button class="btn btn-success btn-block" type="button" data-bs-toggle="modal" data-bs-target="#user-form-modal" (click)="resetText()">New Todo</button>
               </div>
               <hr class="my-3">
               <div>
@@ -97,17 +97,21 @@
                 <div class="form-group">
                   <label class="control-label">Completed</label>
                   <div>
-                    <input type="checkbox" class="form-control" formControlName="completed">
+                    <input type="checkbox" class="form-check" formControlName="completed">
                   </div>
                 </div>
 
                 <br>
 
                 <div class="form-group">
-                  <div>
-                    <button type="submit" class="btn btn-success">Create</button>
-                  </div>
+                  <button type="submit" class="btn btn-success">Create</button>
                 </div>
+                <br>
+                <div *ngIf="createFormText.length != 0" id="createFormText">
+                  {{createFormText}}
+                  <br>
+                </div>
+
               </form>
             </div>
           </div><!-- /.modal-content -->
