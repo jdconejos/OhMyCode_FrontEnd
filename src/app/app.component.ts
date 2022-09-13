@@ -14,6 +14,7 @@ export class AppComponent implements OnInit{
 
   public todoList: Todo[] = [];
   public createFormText = "";
+  public selectedRow = -1;
 
   createForm = new FormGroup({
     userId: new FormControl('', Validators.compose([Validators.required, Validators.min(1)])),
@@ -31,6 +32,10 @@ export class AppComponent implements OnInit{
     this.createFormText = "";
   }
 
+  public selectRow(index: number): void{
+    this.selectedRow = index;
+  }
+
   public getAllTodos(): void {
     this.todoService.getAllTodos().subscribe(
       (response: Todo[]) => {
@@ -43,7 +48,18 @@ export class AppComponent implements OnInit{
     )
   }
 
-  userIdBoxChange(userId: String): void {
+  public deleteTodo(): void {
+    this.todoService.deleteTodo(this.selectedRow).subscribe(
+      () => {
+        this.todoList.splice(this.selectedRow, 1)
+      },
+      (error: HttpErrorResponse) => {
+        alert(error.message)
+      }
+    )
+  }
+
+  public userIdBoxChange(userId: String): void {
     if (userId == '') return this.getAllTodos();
 
     this.todoService.getTodosByUser(Number(userId)).subscribe(
