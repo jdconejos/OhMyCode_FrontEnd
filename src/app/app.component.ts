@@ -3,6 +3,7 @@ import {Todo} from "./todo/todo";
 import {TodoService} from "./todo/todo.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {CookieService} from "ngx-cookie-service";
 
 @Component({
   selector: 'app-root',
@@ -13,10 +14,11 @@ export class AppComponent implements OnInit{
   title = 'OhMyCode_FrontEnd';
 
   public todoList: Todo[] = [];
-  public createFormText = "";
+  public formText = "";
   public selectedElementId = 1;
   public selectedRowIndex = 1;
   public requestType = "post";
+  public loggedUser = '';
 
   createForm = new FormGroup({
     userId: new FormControl('', Validators.compose([Validators.required, Validators.min(1)])),
@@ -24,14 +26,19 @@ export class AppComponent implements OnInit{
     completed: new FormControl(false)
   });
 
-  constructor(private todoService: TodoService) {}
+  loginForm = new FormGroup({
+    username: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required)
+  })
+
+  constructor(private todoService: TodoService, private cookie: CookieService) {}
 
   ngOnInit() {
     this.getAllTodos();
   }
 
   public resetText(): void{
-    this.createFormText = "";
+    this.formText = "";
   }
 
   public setRequestType(newType:string): void{
@@ -71,6 +78,9 @@ export class AppComponent implements OnInit{
 
     this.todoService.getTodosByUser(Number(userId)).subscribe(
       (response: Todo[]) => {
+        this.selectedElementId = 1;
+        this.selectedRowIndex = 1;
+
         this.todoList = response;
         console.log(this.todoList)
       },
@@ -94,7 +104,7 @@ export class AppComponent implements OnInit{
 
       this.todoService.addTodo(newTodo).subscribe(
         (response: Todo) => {
-          this.createFormText = "Todo created successfully"
+          this.formText = "Todo created successfully"
           this.createForm.reset();
           console.log(response)
         },
@@ -104,6 +114,12 @@ export class AppComponent implements OnInit{
       )
     }
     if(this.requestType == 'put') {
+
+      if(Number(this.loggedUser) != this.todoList[this.selectedRowIndex].userId) {
+        this.formText = 'unauthorised to edit this TODO'
+        return;
+      }
+
       let newTodo = {} as Todo;
 
       newTodo.id = this.selectedElementId;
@@ -114,7 +130,7 @@ export class AppComponent implements OnInit{
 
       this.todoService.editTodo(newTodo).subscribe(
         (response: Todo) => {
-          this.createFormText = "Todo edited successfully"
+          this.formText = "Todo edited successfully"
           this.createForm.reset();
 
           this.todoList[this.selectedRowIndex].title = newTodo.title;
@@ -131,4 +147,41 @@ export class AppComponent implements OnInit{
     return;
   }
 
+  loginSubmit() {
+
+    const correctMssg = "Logged in successfully"
+    const wrongMssg = "Wrong username/password"
+
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+    if(this.loginForm.value.password != 'admin') {
+      this.formText = wrongMssg;
+      return;
+    }
+
+    if(this.loginForm.value.username == 'user1') {
+      this.cookie.set('token', '1', 1);
+      this.loggedUser = '1';
+      this.formText = correctMssg;
+      return;
+    }
+
+    if(this.loginForm.value.username == 'user2') {
+      this.cookie.set('token', '2', 1);
+      this.loggedUser = '2';
+      this.formText = correctMssg;
+      return;
+    }
+
+    if(this.loginForm.value.username == 'user3') {
+      this.cookie.set('token', '3', 1);
+      this.loggedUser = '3';
+      this.formText = correctMssg;
+      return;
+    }
+
+    this.formText = wrongMssg;
+  }
 }

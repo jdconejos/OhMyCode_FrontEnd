@@ -29,8 +29,8 @@
                           <td class="text-nowrap align-middle"><span>{{todo.userId}}</span> </td>
                           <td class="text-nowrap align-middle"><span>{{todo.completed}}</span></td>
                           <td class="text-nowrap align-middle">
-                            <a data-bs-toggle="modal" data-bs-target="#user-form-modal" class="MainNavText" id="editLink"
-                               href="#user-form-modal" (click)="resetText(); setRequestType('put'); selectElement(todo.id, indexOfelement)"> edit</a> /
+                            <a data-bs-toggle="modal" data-bs-target="#create-form-modal" class="MainNavText" id="editLink"
+                               href="#create-form-modal" (click)="resetText(); setRequestType('put'); selectElement(todo.id, indexOfelement)"> edit</a> /
                             <a data-bs-toggle="modal" data-bs-target="#deleteModal" class="MainNavText" id="deleteLink"
                                href="#deleteModal" (click)="selectElement(todo.id, indexOfelement)"> delete</a>
                           </td>
@@ -58,7 +58,11 @@
           <div class="card">
             <div class="card-body">
               <div class="text-center px-xl-3">
-                <button class="btn btn-success btn-block" type="button" data-bs-toggle="modal" data-bs-target="#user-form-modal" (click)="resetText(); setRequestType('post')">New Todo</button>
+                <button class="btn btn-success btn-block" type="button" data-bs-toggle="modal" data-bs-target="#modalLoginForm">{{loggedUser != '' ? loggedUser : 'Log In'}}</button>
+              </div>
+              <hr class="my-3">
+              <div class="text-center px-xl-3">
+                <button class="btn btn-success btn-block" type="button" data-bs-toggle="modal" data-bs-target="#create-form-modal" (click)="resetText(); setRequestType('post')">New Todo</button>
               </div>
               <hr class="my-3">
               <div>
@@ -75,11 +79,11 @@
       </div>
 
       <!-- create/edit modal -->
-      <div id="user-form-modal" class="modal fade">
+      <div id="create-form-modal" class="modal fade">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title">New Todo</h1>
+              <h1 class="modal-title">{{ requestType == 'post' ? 'New' : 'Edit'}} Todo</h1>
             </div>
             <div class="modal-body">
               <form [formGroup]="createForm" (ngSubmit)="onSubmit()" role="form" action="">
@@ -111,11 +115,11 @@
                 <br>
 
                 <div class="form-group">
-                  <button type="submit" class="btn btn-success">Create</button>
+                  <button type="submit" class="btn btn-success">{{ requestType == 'post' ? 'Create' : 'Edit'}} Todo</button>
                 </div>
                 <br>
-                <div *ngIf="createFormText.length != 0" id="createFormText">
-                  {{createFormText}}
+                <div *ngIf="formText.length != 0" id="createFormText">
+                  {{formText}}
                   <br>
                 </div>
 
@@ -138,6 +142,61 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
               <button type="button" class="btn btn-danger" (click)="deleteTodo()" data-bs-dismiss="modal">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- login modal -->
+      <div class="modal fade" id="modalLoginForm">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title">Login</h1>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="loginForm" (ngSubmit)="loginSubmit()" role="form">
+                <div class="form-group">
+                  <label class="control-label">Username</label>
+                  <div>
+                    <input
+                      [class.is-invalid]="loginForm.get('username')?.touched && loginForm.get('username')?.invalid"
+                      type="text" class="form-control" formControlName="username">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="control-label">Password</label>
+                  <div>
+                    <input
+                      [class.is-invalid]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+                      type="password" class="form-control" formControlName="password">
+                  </div>
+                </div>
+
+                <br>
+
+                <div class="form-group">
+                  <button type="submit" class="btn btn-success">Log In</button>
+                </div>
+
+                <br>
+                <div *ngIf="formText.length != 0" id="loginFormText">
+                  {{formText}}
+                  <br>
+                </div>
+
+              </form>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div>
+
+      <div class="modal fade" id="modalUnauthorized">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-body">
+              Unauthorised
             </div>
           </div>
         </div>
