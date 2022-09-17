@@ -30,9 +30,9 @@
                           <td class="text-nowrap align-middle"><span>{{todo.completed}}</span></td>
                           <td class="text-nowrap align-middle">
                             <a data-bs-toggle="modal" data-bs-target="#user-form-modal" class="MainNavText" id="editLink"
-                               href="#user-form-modal" (click)="resetText(); setRequestType('put'); selectElement(todo.id)"> edit</a> /
+                               href="#user-form-modal" (click)="resetText(); setRequestType('put'); selectElement(todo.id, indexOfelement)"> edit</a> /
                             <a data-bs-toggle="modal" data-bs-target="#deleteModal" class="MainNavText" id="deleteLink"
-                               href="#deleteModal" (click)="selectElement(todo.id)"> delete</a>
+                               href="#deleteModal" (click)="selectElement(todo.id, indexOfelement)"> delete</a>
                           </td>
                       </tr>
                     </tbody>
@@ -74,7 +74,7 @@
         </div>
       </div>
 
-      <!--modal-->
+      <!-- create/edit modal -->
       <div id="user-form-modal" class="modal fade">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -88,7 +88,7 @@
                   <div>
                     <input
                       [class.is-invalid]="createForm.get('userId')?.touched && createForm.get('userId')?.invalid"
-                      type="number" class="form-control" formControlName="userId">
+                      type="number" class="form-control" formControlName="userId" value="{{requestType=='put' ? todoList[selectedRowIndex].userId : ''}}">
                   </div>
                 </div>
 
@@ -97,14 +97,14 @@
                   <div>
                     <input
                       [class.is-invalid]="createForm.get('title')?.touched && createForm.get('title')?.invalid"
-                      type="text" class="form-control" formControlName="title">
+                      type="text" class="form-control" formControlName="title" value="{{requestType=='put' ? todoList[selectedRowIndex].title : ''}}">
                   </div>
                 </div>
 
                 <div class="form-group">
                   <label class="control-label">Completed</label>
                   <div>
-                    <input type="checkbox" class="form-check" formControlName="completed">
+                    <input type="checkbox" class="form-check" formControlName="completed" [checked]="requestType=='put' ? todoList[selectedRowIndex].completed : false">
                   </div>
                 </div>
 
@@ -125,7 +125,7 @@
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
 
-      <!-- Modal HTML -->
+      <!-- delete confirmation modal -->
       <div id="deleteModal" class="modal fade">
         <div class="modal-dialog modal-confirm">
           <div class="modal-content">

@@ -14,8 +14,9 @@ export class AppComponent implements OnInit{
 
   public todoList: Todo[] = [];
   public createFormText = "";
-  public selectedElementId = -1;
-  public requestType = "";
+  public selectedElementId = 1;
+  public selectedRowIndex = 1;
+  public requestType = "post";
 
   createForm = new FormGroup({
     userId: new FormControl('', Validators.compose([Validators.required, Validators.min(1)])),
@@ -37,8 +38,9 @@ export class AppComponent implements OnInit{
     this.requestType = newType;
   }
 
-  public selectElement(elemId: number): void{
+  public selectElement(elemId: number, rowIndex: number): void{
     this.selectedElementId = elemId;
+    this.selectedRowIndex = rowIndex;
   }
 
   public getAllTodos(): void {
@@ -53,18 +55,10 @@ export class AppComponent implements OnInit{
     )
   }
 
-  private findIndexById(id:number): number{
-    for(let i = 0; i < this.todoList.length; ++i) {
-      if(this.todoList[i].id == id) return i;
-    }
-    return -1;
-  }
-
   public deleteTodo(): void {
     this.todoService.deleteTodo(this.selectedElementId).subscribe(
       () => {
-        let selectedRow = this.findIndexById(this.selectedElementId);
-        this.todoList.splice(selectedRow, 1)
+        this.todoList.splice(this.selectedRowIndex, 1)
       },
       (error: HttpErrorResponse) => {
         alert(error.message)
@@ -123,10 +117,9 @@ export class AppComponent implements OnInit{
           this.createFormText = "Todo edited successfully"
           this.createForm.reset();
 
-          let index = this.findIndexById(this.selectedElementId);
-          this.todoList[index].title = newTodo.title;
-          this.todoList[index].userId = newTodo.userId;
-          this.todoList[index].completed = newTodo.completed;
+          this.todoList[this.selectedRowIndex].title = newTodo.title;
+          this.todoList[this.selectedRowIndex].userId = newTodo.userId;
+          this.todoList[this.selectedRowIndex].completed = newTodo.completed;
 
           console.log(response)
         },
