@@ -18,7 +18,7 @@ export class AppComponent implements OnInit{
   public selectedElementId = 1;
   public selectedRowIndex = 1;
   public requestType = "post";
-  public loggedUser = '';
+  public loggedUser = 'ey'
 
   createForm = new FormGroup({
     userId: new FormControl('', Validators.compose([Validators.required, Validators.min(1)])),
@@ -107,6 +107,10 @@ export class AppComponent implements OnInit{
           this.formText = "Todo created successfully"
           this.createForm.reset();
           console.log(response)
+
+          //updating local copy
+          this.todoList.push(newTodo);
+
         },
         (error: HttpErrorResponse) => {
           alert(error.message)
@@ -115,7 +119,7 @@ export class AppComponent implements OnInit{
     }
     if(this.requestType == 'put') {
 
-      if(Number(this.loggedUser) != this.todoList[this.selectedRowIndex].userId) {
+      if(Number(this.cookie.get('token')) != this.todoList[this.selectedRowIndex].userId) {
         this.formText = 'unauthorised to edit this TODO'
         return;
       }
@@ -133,6 +137,7 @@ export class AppComponent implements OnInit{
           this.formText = "Todo edited successfully"
           this.createForm.reset();
 
+          //updating local copy
           this.todoList[this.selectedRowIndex].title = newTodo.title;
           this.todoList[this.selectedRowIndex].userId = newTodo.userId;
           this.todoList[this.selectedRowIndex].completed = newTodo.completed;
@@ -163,25 +168,34 @@ export class AppComponent implements OnInit{
 
     if(this.loginForm.value.username == 'user1') {
       this.cookie.set('token', '1', 1);
-      this.loggedUser = '1';
       this.formText = correctMssg;
       return;
     }
 
     if(this.loginForm.value.username == 'user2') {
       this.cookie.set('token', '2', 1);
-      this.loggedUser = '2';
       this.formText = correctMssg;
       return;
     }
 
     if(this.loginForm.value.username == 'user3') {
       this.cookie.set('token', '3', 1);
-      this.loggedUser = '3';
       this.formText = correctMssg;
       return;
     }
 
     this.formText = wrongMssg;
+  }
+
+  editClick(elemId: number, elemIndex: number) {
+    this.resetText();
+    this.setRequestType('put');
+    this.selectElement(elemId, elemIndex);
+
+    //initializing the dialog
+    this.createForm.value.title = this.todoList[this.selectedRowIndex].title;
+    this.createForm.value.userId = String(this.todoList[this.selectedRowIndex].userId);
+    this.createForm.value.completed = this.todoList[this.selectedRowIndex].completed;
+
   }
 }
