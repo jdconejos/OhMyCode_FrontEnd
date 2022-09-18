@@ -189,9 +189,9 @@ export class AppComponent implements OnInit{
     this.selectElement(elemId, elemIndex);
 
     //initializing the dialog
-    this.createForm.value.title = this.todoList[this.selectedRowIndex].title;
-    this.createForm.value.userId = String(this.todoList[this.selectedRowIndex].user.id);
-    this.createForm.value.completed = this.todoList[this.selectedRowIndex].completed;
+    this.createForm.controls['title'].setValue(this.todoList[this.selectedRowIndex].title);
+    this.createForm.controls['userId'].setValue(String(this.todoList[this.selectedRowIndex].user.id));
+    this.createForm.controls['completed'].setValue(this.todoList[this.selectedRowIndex].completed);
 
   }
 }
