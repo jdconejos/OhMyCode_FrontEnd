@@ -1,27 +1,9 @@
 # OhMyCodeFront
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.2.
+En este repositorio se encuentra el proyecto de BackEnd de la prueba técnica de OhMyCode realizada por José Daniel Conejos Jiménez.
 
-## Development server
+Se ha desarrollado utilizando AngularCLI. Para ejecutar será necesario descargar los archivos, instalar las dependencias con `npm install`, y ejecutar con `ng serve`.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+En este repositorio se encuentran dos versiones de la prueba: en la rama *master* la web se conecta a `https://jsonplaceholder.typicode.com`, y se han implementado todas las funcionalidades, incluyendo las bonus. Tal y como se indica en el documento, se han creado tres usuarios diferentes (`user1`, `user2` y `user3`; todos con contraseña `admin`), que tienen acceso sólo a los TODOs asignados.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Dentro de la rama *integration* se encuentra la version de la web donde se conecta al BackEnd creado durante la prueba (https://github.com/jdconejos/OhMyCode_BackEnd). Para que funcione, se tendra que ejecutar esta versión conjuntamente al BackEnd. Debido a problemas relacionados con CORS (*Cross-origin resource sharing*), solo se han implementado las funcionalidades de consulta y creacion de TODOs. Del resto de funcionalidades no se asegura el funcionamiento.
