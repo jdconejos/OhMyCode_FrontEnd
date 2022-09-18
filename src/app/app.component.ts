@@ -4,6 +4,7 @@ import {TodoService} from "./todo/todo.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {CookieService} from "ngx-cookie-service";
+import {TodoRequest} from "./todo/todoRequest";
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,7 @@ export class AppComponent implements OnInit{
   public selectedElementId = 1;
   public selectedRowIndex = 1;
   public requestType = "post";
-  public loggedUser = 'ey'
+  public loggedUser = ''
 
   createForm = new FormGroup({
     userId: new FormControl('', Validators.compose([Validators.required, Validators.min(1)])),
@@ -73,10 +74,10 @@ export class AppComponent implements OnInit{
     )
   }
 
-  public userIdBoxChange(userId: String): void {
-    if (userId == '') return this.getAllTodos();
+  public userIdBoxChange(userName: String): void {
+    if (userName == '') return this.getAllTodos();
 
-    this.todoService.getTodosByUser(Number(userId)).subscribe(
+    this.todoService.getTodosByUser(userName).subscribe(
       (response: Todo[]) => {
         this.selectedElementId = 1;
         this.selectedRowIndex = 1;
@@ -96,7 +97,7 @@ export class AppComponent implements OnInit{
     }
 
     if(this.requestType == 'post') {
-      let newTodo = {} as Todo;
+      let newTodo = {} as TodoRequest;
       newTodo.title = <string>this.createForm.value.title;
       // @ts-ignore
       newTodo.userId = this.createForm.value.userId;
@@ -109,7 +110,7 @@ export class AppComponent implements OnInit{
           console.log(response)
 
           //updating local copy
-          this.todoList.push(newTodo);
+          this.todoList.push(response);
 
         },
         (error: HttpErrorResponse) => {
@@ -119,12 +120,7 @@ export class AppComponent implements OnInit{
     }
     if(this.requestType == 'put') {
 
-      if(Number(this.cookie.get('token')) != this.todoList[this.selectedRowIndex].userId) {
-        this.formText = 'unauthorised to edit this TODO'
-        return;
-      }
-
-      let newTodo = {} as Todo;
+      let newTodo = {} as TodoRequest;
 
       newTodo.id = this.selectedElementId;
       newTodo.title = <string>this.createForm.value.title;
@@ -138,14 +134,14 @@ export class AppComponent implements OnInit{
           this.createForm.reset();
 
           //updating local copy
-          this.todoList[this.selectedRowIndex].title = newTodo.title;
-          this.todoList[this.selectedRowIndex].userId = newTodo.userId;
-          this.todoList[this.selectedRowIndex].completed = newTodo.completed;
+          this.todoList[this.selectedRowIndex].title = response.title;
+          this.todoList[this.selectedRowIndex].user = response.user;
+          this.todoList[this.selectedRowIndex].completed = response.completed;
 
           console.log(response)
         },
         (error: HttpErrorResponse) => {
-          alert(error.message)
+          this.formText = "Unauthorized to edit this TODO"
         }
       )
     }
@@ -194,7 +190,7 @@ export class AppComponent implements OnInit{
 
     //initializing the dialog
     this.createForm.value.title = this.todoList[this.selectedRowIndex].title;
-    this.createForm.value.userId = String(this.todoList[this.selectedRowIndex].userId);
+    this.createForm.value.userId = String(this.todoList[this.selectedRowIndex].user.id);
     this.createForm.value.completed = this.todoList[this.selectedRowIndex].completed;
 
   }

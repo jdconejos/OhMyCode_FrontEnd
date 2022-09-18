@@ -73,6 +73,10 @@
               "browserTarget": "OhMyCode_Front:build:development"
             }
           },
+          "options": {
+            "browserTarget": "OhMyCode_Front:build",
+            "proxyConfig": "src/proxy.conf.json"
+          },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
