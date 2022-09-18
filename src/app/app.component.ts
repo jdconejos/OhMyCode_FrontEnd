@@ -18,7 +18,7 @@ export class AppComponent implements OnInit{
   public selectedElementId = 1;
   public selectedRowIndex = 1;
   public requestType = "post";
-  public loggedUser = 'ey'
+  public loggedUser = ''
 
   createForm = new FormGroup({
     userId: new FormControl('', Validators.compose([Validators.required, Validators.min(1)])),
@@ -168,18 +168,21 @@ export class AppComponent implements OnInit{
 
     if(this.loginForm.value.username == 'user1') {
       this.cookie.set('token', '1', 1);
+      this.loggedUser = 'user1'
       this.formText = correctMssg;
       return;
     }
 
     if(this.loginForm.value.username == 'user2') {
       this.cookie.set('token', '2', 1);
+      this.loggedUser = 'user2'
       this.formText = correctMssg;
       return;
     }
 
     if(this.loginForm.value.username == 'user3') {
       this.cookie.set('token', '3', 1);
+      this.loggedUser = 'user3'
       this.formText = correctMssg;
       return;
     }
@@ -193,9 +196,9 @@ export class AppComponent implements OnInit{
     this.selectElement(elemId, elemIndex);
 
     //initializing the dialog
-    this.createForm.value.title = this.todoList[this.selectedRowIndex].title;
-    this.createForm.value.userId = String(this.todoList[this.selectedRowIndex].userId);
-    this.createForm.value.completed = this.todoList[this.selectedRowIndex].completed;
+    this.createForm.controls['title'].setValue(this.todoList[this.selectedRowIndex].title);
+    this.createForm.controls['userId'].setValue(String(this.todoList[this.selectedRowIndex].userId));
+    this.createForm.controls['completed'].setValue(this.todoList[this.selectedRowIndex].completed);
 
   }
 }
